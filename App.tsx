@@ -59,33 +59,42 @@ const App: React.FC = () => {
     setActiveTab('rooms');
   };
 
-  // Mock initial data for demonstration if empty
+  // Populate exactly 50 students with diverse rankings
   const populateDemo = () => {
-    const names = [
-      "Alice Thompson", "Bob Richards", "Charlie Davis", "Diana Prince", 
-      "Ethan Hunt", "Fiona Gallagher", "George Miller", "Hannah Abbott",
-      "Ian Wright", "Julia Roberts", "Kevin Hart", "Laura Croft"
-    ];
+    const firstNames = ["James", "Mary", "Robert", "Patricia", "John", "Jennifer", "Michael", "Linda", "William", "Elizabeth"];
+    const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"];
     
-    const demoStudents: Student[] = names.map(name => ({
-      id: crypto.randomUUID(),
-      name,
-      rankings: [
-        CASE_STUDIES[Math.floor(Math.random() * 6)].id,
-        CASE_STUDIES[Math.floor(Math.random() * 6)].id,
-        CASE_STUDIES[Math.floor(Math.random() * 6)].id,
-      ]
-    }));
+    const demoStudents: Student[] = [];
+    
+    // Generate 50 unique-ish names
+    for (let i = 0; i < 50; i++) {
+      const fn = firstNames[Math.floor(Math.random() * firstNames.length)];
+      const ln = lastNames[Math.floor(Math.random() * lastNames.length)];
+      
+      // Ensure we don't pick the same case twice for a single student
+      const shuffledCases = [...CASE_STUDIES].sort(() => 0.5 - Math.random());
+      
+      demoStudents.push({
+        id: crypto.randomUUID(),
+        name: `${fn} ${ln} #${i + 1}`,
+        rankings: [
+          shuffledCases[0].id,
+          shuffledCases[1].id,
+          shuffledCases[2].id,
+        ]
+      });
+    }
+    
     setStudents(demoStudents);
   };
 
   return (
     <div className="min-h-screen pb-20">
       {/* Header */}
-      <header className="bg-slate-900 text-white py-6 px-8 sticky top-0 z-50 shadow-lg">
+      <header className="bg-slate-900 text-white py-6 px-8 sticky top-0 z-50 shadow-lg border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-900/20">
               <i className="fa-solid fa-graduation-cap text-xl"></i>
             </div>
             <div>
@@ -116,7 +125,7 @@ const App: React.FC = () => {
           <div className="flex gap-2">
             <button 
               onClick={generateGroups}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-md text-sm font-bold flex items-center gap-2 transition-colors"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-md text-sm font-bold flex items-center gap-2 transition-colors shadow-lg shadow-emerald-900/20"
             >
               <i className="fa-solid fa-wand-magic-sparkles"></i>
               Optimize Groups
@@ -144,50 +153,50 @@ const App: React.FC = () => {
 
                  <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                   <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                    <h3 className="font-bold text-slate-700 flex items-center gap-2">
+                    <h3 className="font-bold text-slate-700 flex items-center gap-2 text-sm uppercase tracking-wider">
                       <i className="fa-solid fa-list-ul text-blue-500"></i>
                       Student Registry
                     </h3>
                     <button 
                       onClick={populateDemo} 
-                      className="text-[10px] text-blue-600 hover:underline font-bold"
+                      className="text-[10px] text-blue-600 hover:underline font-bold bg-blue-50 px-2 py-1 rounded"
                     >
-                      Load Demo Data
+                      Load Full Class (50)
                     </button>
                   </div>
                   <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
                     {students.length === 0 ? (
                       <div className="p-8 text-center">
                         <i className="fa-solid fa-users-slash text-slate-200 text-4xl mb-3"></i>
-                        <p className="text-slate-400 text-sm">No students added yet.</p>
+                        <p className="text-slate-400 text-sm font-medium">No students added yet.</p>
                       </div>
                     ) : (
                       <table className="w-full text-left text-sm">
-                        <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold">
+                        <thead className="bg-slate-50 text-slate-400 uppercase text-[10px] font-bold">
                           <tr>
-                            <th className="px-4 py-2">Name</th>
-                            <th className="px-4 py-2">Top Choice</th>
-                            <th className="px-4 py-2">Actions</th>
+                            <th className="px-4 py-3">Name</th>
+                            <th className="px-4 py-3">Top Choice</th>
+                            <th className="px-4 py-3 text-right">Action</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                           {students.map(s => (
                             <tr key={s.id} className="hover:bg-slate-50 transition-colors">
-                              <td className="px-4 py-3 font-medium text-slate-800">{s.name}</td>
+                              <td className="px-4 py-3 font-semibold text-slate-700">{s.name}</td>
                               <td className="px-4 py-3">
                                 <span 
-                                  className="px-2 py-1 rounded text-[10px] text-white font-bold"
+                                  className="px-2 py-0.5 rounded text-[10px] text-white font-bold"
                                   style={{ backgroundColor: CASE_STUDIES.find(c => c.id === s.rankings[0])?.color }}
                                 >
                                   {CASE_STUDIES.find(c => c.id === s.rankings[0])?.name.split(':')[0]}
                                 </span>
                               </td>
-                              <td className="px-4 py-3">
+                              <td className="px-4 py-3 text-right">
                                 <button 
                                   onClick={() => removeStudent(s.id)}
-                                  className="text-slate-300 hover:text-red-500 transition-colors"
+                                  className="text-slate-300 hover:text-red-500 transition-colors p-1"
                                 >
-                                  <i className="fa-solid fa-xmark"></i>
+                                  <i className="fa-solid fa-trash-can text-xs"></i>
                                 </button>
                               </td>
                             </tr>
@@ -204,13 +213,24 @@ const App: React.FC = () => {
             <div className="lg:col-span-7">
               <StudentGraph students={students} />
               
-              <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {CASE_STUDIES.map(cs => (
-                  <div key={cs.id} className="bg-white p-3 rounded-lg shadow-sm border border-slate-100 flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cs.color }}></div>
-                    <span className="text-xs font-medium text-slate-600 truncate">{cs.name}</span>
-                  </div>
-                ))}
+              <div className="mt-8">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                  <i className="fa-solid fa-book-open"></i>
+                  Case Study Briefing
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {CASE_STUDIES.map(cs => (
+                    <div key={cs.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col gap-2 group hover:border-blue-200 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 rounded-full ring-4 ring-slate-50" style={{ backgroundColor: cs.color }}></div>
+                        <span className="text-xs font-bold text-slate-800">{cs.name}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 leading-relaxed italic">
+                        "{cs.description}"
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -250,8 +270,8 @@ const App: React.FC = () => {
           <span className="font-semibold">{rooms.length}</span> Active Rooms
         </div>
         <div className="w-px h-4 bg-slate-700"></div>
-        <div className="text-slate-400 italic">
-          Max: 50 Students
+        <div className="text-slate-400 italic text-[10px] uppercase font-bold tracking-widest">
+          Limit: {MAX_STUDENTS}
         </div>
       </div>
     </div>

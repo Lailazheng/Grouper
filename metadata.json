@@ -1,5 +1,5 @@
 {
-  "name": "Professor's Student Grouper",
+  "name": "BU362 Student Grouper",
   "description": "A sophisticated tool for university professors to group students based on case study rankings, featuring a D3-powered relationship graph and meeting room assignments.",
   "requestFramePermissions": []
 }

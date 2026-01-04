@@ -6,6 +6,7 @@ export interface CaseStudy {
   id: string;
   name: string;
   color: string;
+  description: string;
 }
 
 export interface Student {
